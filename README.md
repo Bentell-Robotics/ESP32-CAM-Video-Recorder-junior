@@ -4,10 +4,16 @@ Simple fast version of https://github.com/jameszah/ESP32-CAM-Video-Recorder
 ESP32-CAM-Video-Recorder-junior
 
   This program records an mjpeg avi video to the sd card of an ESP32-CAM.
-  
-  You can just compile, download, power-on ... and it will record a series of 30 minute, HD videos, 12.5 fps on your SD card ... while you read on ... 
-  
+
+  You can just compile, download, power-on ... and it will record a series of 30 minute, HD videos, 12.5 fps on your SD card ... while you read on ...
+
   Although if you put your ssid and password, and timezone into the config.txt file, and put that file on the SD card, things will be nicer!  You can read the comments in config.txt and set your desired recording length, framesize, and internet on/off in there.
+
+## Update Feb 20, 2022 - Continuous recording
+
+This fork removes wireless features from master/ESP32-CAM-Video-Recorder-junior-50x-lpmod.ino and includes video_continuous.ino which creates a single valid avi every 5 seconds using the full recording thus far so that the user can power off the device without specifying an initial recording length.
+
+TODO: Compilation time grows by ~10ms for every 5 seconds of video. Not only will this lose video over time, but powering off the device during this time corrupts the avi. This is especially a problem because the whole point is to put the entire recording into a single avi.
 
 ## Update Jan  7, 2021 - One-Click Installer
 
@@ -62,7 +68,7 @@ from an esp32 max of about 3.5 Mbps.
 
 <img src="./v58/2mbps.jpg">
 
-## Update Dec 28, 2021 - new version with http browser file tranfer to download movies 
+## Update Dec 28, 2021 - new version with http browser file tranfer to download movies
 
 You need all the files from the v57 folder:   
 https://github.com/jameszah/ESP32-CAM-Video-Recorder-junior/tree/master/v57  
@@ -72,9 +78,9 @@ https://github.com/jameszah/ESPxWebFlMgr/tree/master/esp32_sd_file_manager
 Stay tuned for instructions.
 
 ---
-  
+
   Here is a timelapse sample, recorded and uploaded to Youtube.  The settings were framesize UXGA (13), quality 15, 1 fps, 1800 seconds long, speedup 30 times.  Click the image and it will take you to Youtube to see it.
-  
+
 [![Click to see on Youtube](http://img.youtube.com/vi/tzMFukXsX6o/hqdefault.jpg)](http://www.youtube.com/watch?v=tzMFukXsX6o "Clouds from Youtube")
 
 Here is a realtime sample, recorded and uploaded to Youtube.  The settings were framesize HD (11), quality 14, max fps or zero interval, 30 seconds long, speedup 1 times.  It came out at about 12.4 fps. Lowering the quality slightly -- higher quality number -- will make the bytes per frame smaller, and keep the speed at the camera maximum of 12.5 fps for HD.  Click the image and it will take you to Youtube to see it.
@@ -121,15 +127,15 @@ Has the file delete code included, so it will delete old videos as long as the c
 Also, this has tasks and mutexes and priorities, in defiance of the original design.  All that makes sure that the camera and the sd and the wifi, can all operate at full speed without blocking each other.  You can record the streaming video with VLC on your coomputer if you like.
 
 
-## Update Jan 04, 2021 - Streaming GOPRO with WiFiManager 
+## Update Jan 04, 2021 - Streaming GOPRO with WiFiManager
 v10x-wifiman - added WiFiManager to set your wifi ssid and password using your phone
  - use the normal WiFiManager procedure to set up ssid with 192.168.4.1 etc
  https://github.com/tzapu/WiFiManager
- 
+
  You must use the latest WiFiManager code which supports the ESP32 - currently 2.0.3-alpha which can be installed from Arduino IDE - Manage Libraries. And you must reboot the esp32 after you have set the ssid.
- 
+
  Some other new stuff in the comments - a version that adds back the ftp, and a version that slows down the recording for timelapses, or just lower framerates to save SD card space.
- 
+
 
 https://github.com/jameszah/ESP32-CAM-Video-Recorder-junior/blob/master/ESP32-CAM-Video-Recorder-junior-10x.wifiman.ino
 
@@ -151,7 +157,7 @@ v09 - faster version - controlled by switches
 - the Internet is shut off by default, so you #define IncludeInternet to 1, and put in your ssid and password
 - if you have no switches attached to gpio12 and gpio13, then they will not be grounded and it will "record" and "svga 25fps"
 - at SVGA 25fps, quality 12 in the sunshine, you get files of 1.5 GB per 30 minutes - so reduce quality, switch to lower framesize, or go to the timelapse system of 1 frame per second or 10 frames per second, etc to get smaller files
-- these are mjpeg avi files, so each frame is an independent jpeg, so you can extract them all, but you do not get the size benefits of h264 or xvid, etc 
+- these are mjpeg avi files, so each frame is an independent jpeg, so you can extract them all, but you do not get the size benefits of h264 or xvid, etc
 - the pictures below show how to see streaming video, or a series of frames on your browser
 - filenames are now "desklens10.003.avi" so they are easy to deal with.  "desklens" is your device name, 10 is the 10th boot of your device, and 003 is the 3rd file made during this boot
 
@@ -164,27 +170,27 @@ v07 - faster version - should operate at full speed of camera
 
 ## Update Sep 13, 2020 - adding complexity
 v02 - basic version
- 
+
 v04 - added wifi, time, stream @ 5 fps, and photos @ 1 fps
  - you need to add your wifi ssid and password below  
  - if you walk away from your wifi, then wifi wont work, but recording continues
  - if you are away from wifi at boot time, it wont have wifi, but you will record the events of January 1970
  - the main web page just shows your available disk space, and your wifi signal strengh, deleting lots of stats from the other version
- - the stream function shows a moving picture in one window, that you can watch or record on your computer using VLC etc.  With bad wifi, you could slow the 5 fps to 1 or 2 fps, by replacing the delay(200) with a longer delay 
+ - the stream function shows a moving picture in one window, that you can watch or record on your computer using VLC etc.  With bad wifi, you could slow the 5 fps to 1 or 2 fps, by replacing the delay(200) with a longer delay
  - the photos function shows a series of photos 1 second apart for 15 seconds, that you can scroll through on your web browser and save a jpg, or refresh for another 15 second group
  - both the streaming and the photos use the same images that are stored in the avi file, so it should not affect the frame-rate of the recording on the sd, but you might see partial images if you have slow wifi and the sd writer deletes the image while it it being transmitted.  Let me know of problems in the comments. :smiley:
- 
+
  v04a - bugfix to the streaming when used in poor wifi situations, and more stats on webpage to track fps
- 
+
 <img src="./web_v04.jpg">
 
- ## Original Sep 12, 2020 
- 
+ ## Original Sep 12, 2020
+
   by James Zahary Sep 12, 2020
      jamzah.plc@gmail.com
 
   https://github.com/jameszah/ESP32-CAM-Video-Recorder-junior
-  
+
   https://github.com/jameszah/ESP32-CAM-Video-Recorder
 
     jameszah/ESP32-CAM-Video-Recorder is licensed under the
@@ -211,14 +217,14 @@ v04 - added wifi, time, stream @ 5 fps, and photos @ 1 fps
      Release Pin 12 and it will record forever.
 
   Compile Time Parameters
-  1.  framesize 10,9,7,6,5: 
-  
-    10 - UXGA (1600x1200 @ 6 fps), 
-    9 - SXGA (1280x1024 @ 6 fps), 
-    7 - SVGA(800x600 @ 24 fps), 
-    6 - VGA(640x480 @ 24 fps), 
+  1.  framesize 10,9,7,6,5:
+
+    10 - UXGA (1600x1200 @ 6 fps),
+    9 - SXGA (1280x1024 @ 6 fps),
+    7 - SVGA(800x600 @ 24 fps),
+    6 - VGA(640x480 @ 24 fps),
     5 - CIF(400x296 @ 50 fps)
-   
+
   2.  quality - 1 to 63 - 10 is a good start, increase to 20 to get more frames per second - must be higher than jpeg_quality below
   3.  avi_length - seconds for each avi - it closes files, and starts another file after this time - like 60 or 1800
   4.  devname - a text name for your camera when the files are on your computer
@@ -248,5 +254,3 @@ v04 - added wifi, time, stream @ 5 fps, and photos @ 1 fps
           - this is the 3rd file, and started 120 seconds after the boot, so the files must be 60 seconds long
 
   Small red led on the back blinks with every frame.
-
-
